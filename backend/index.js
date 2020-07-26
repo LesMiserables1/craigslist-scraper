@@ -1,9 +1,6 @@
 const express = require('express')
 const rp = require('request-promise')
 const cheerio = require('cheerio')
-const { Options } = require('selenium-webdriver/firefox');
-const { head, post } = require('request-promise');
-require('geckodriver')
 const bodyParser = require('body-parser')
 const puppeteer = require('puppeteer');
 
