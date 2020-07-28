@@ -12,16 +12,16 @@ let status_scrape = 0
 app.use(bodyParser.json())
 
 app.post('/content', (req, res) => {
-  let resp
-  if(!status_scrape){
-     resp = {status : status_scrape}
-  }else{
-    resp = 
-    {
-      'status': status_scrape,
-      'data': data_list 
-    }
+  let resp = 
+  {
+    'status': status_scrape,
+    'data': data_list 
   }
+  // if(!status_scrape){
+  //    resp = {status : status_scrape}
+  // }else{
+    
+
   res.send(resp)
 })
 
