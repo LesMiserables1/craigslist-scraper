@@ -66,7 +66,7 @@ let scraping1 = async (url) => {
 }
 
 let scraping2 = async (urls) => {
-  const browser = await puppeteer.launch({ headless: false })
+  const browser = await puppeteer.launch({headless:false})
   let page = await browser.newPage()
   for (let i = 0; i < urls.length; ++i) {
     try {
@@ -80,7 +80,14 @@ let scraping2 = async (urls) => {
           let email = { email: document.querySelector('a[class="mailapp"]').innerHTML }
           list.push(email)
         } catch (error) {
-          list.push({ email: "" })
+          try {
+            await document.querySelector('button[class="show-phone"]').click()
+            await new Promise(r => setTimeout(r, 8000))
+            let email = {email: document.querySelector('span[id="reply-tel-number"]').innerHTML}
+            list.push(email)
+          } catch (error) {
+            list.push({ email: "" })
+          }
         }
         try {
           let headlines = { title: document.querySelector('span[class=postingtitletext]').textContent }
@@ -95,13 +102,14 @@ let scraping2 = async (urls) => {
           list.push({ address: "" })
         }
         try {
-          let desc = { desc: document.querySelector('p[class="postinginfo"').innerHTML }
+          let desc = { desc: document.querySelector('section[id=postingbody').innerHTML }
           list.push(desc)
         } catch (error) {
           list.push({ desc: "" })
         }
         try {
-          let post_id = { post_id: document.querySelector('section[id=postingbody').innerHTML }
+         
+          let post_id = { post_id: document.querySelector('p[class="postinginfo"]').innerHTML }
           list.push(post_id)
         } catch (error) {
           list.push({ post_id: "" })
@@ -117,4 +125,8 @@ let scraping2 = async (urls) => {
   return data_list
 }
 
+app.post('/test',async(req,res)=>{
+  let url_list = ['https://boston.craigslist.org/nos/off/d/newburyport-office-space-available/7167099745.html']
+  res.send(await scraping2(url_list))
+})
 app.listen(3000)
