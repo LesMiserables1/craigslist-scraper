@@ -1,0 +1,119 @@
+<!DOCTYPE html5>
+<html>
+
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title>Bot Project</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+ 
+  <link rel='stylesheet' type='text/css' media='screen' href='css/bootsrap/css/bootstrap.min.css'>
+  
+  <!--Bootstrap references-->
+  <script src="js/bootsrap/js/jquery-3.5.1.slim.min.js"></script>
+  <script src="js/bootsrap/js/bootstrap.bundle.min.js"></script>
+  <script src="js/bootsrap/js/bootstrap.bundle.js"></script>
+  <script src="js/bootsrap/js/bootstrap.js"></script>
+
+  <link rel='stylesheet' type='text/css' media='screen' href='css/main.css'>
+
+</head>
+
+
+<body>
+  <!--Nav bar-->
+  <nav class="navbar navbar-expand-lg navbar-light bg-secondary navbar-custom">
+    <a class="navbar-brand" href="#">Craiglish bot</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">About <span class="sr-only">(current)</span></a>
+        </li>
+        
+        
+        <li class="nav-item">
+          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <!--Nav bar-->
+  <!--Principal-->
+  <div class="container">
+    <div class="card-body">
+      <div class="row">
+        <!--Left container-->
+        <div class="col-lg-3 card">
+          <p class="text-center font-weight-bold">Filters:</p>
+          <p>Select country:</p>
+          <div class="input-group mb-3">
+            <select class="custom-select" id="inputGroupSelect01">
+              <option selected>Choose...</option>
+              <option value="1">Canada</option>
+              <option value="2">USA</option>
+              <option value="3">Mexico</option>
+            </select>
+          </div>
+          <p>Select state:</p>
+          <div class="input-group mb-3">
+            <select class="custom-select" id="inputGroupSelect01">
+              <option selected>Choose...</option>
+              <option value="1">One</option>
+              <option value="2">Two</option>
+              <option value="3">Three</option>
+            </select>
+          </div>
+        </div>
+        <!--End Left container-->
+
+        <!--Right container-->
+
+        <div class="col-lg-9">
+          <div class="input-group  mb-3">
+            <input type="text" class="form-control" placeholder="Key word" aria-label="Recipient's username"
+              aria-describedby="basic-addon2">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="button">Search</button>
+            </div>
+          </div>
+          <hr>
+        </div>
+        <!--End Right container-->
+      </div>
+    </div>
+
+
+  </div>
+
+  <!--End principal-->
+  <!--Pagination-->
+  <div class="card-body ">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+        <li class="page-item disabled">
+          <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+        </li>
+        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+          <a class="page-link" href="#">Next</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  </div>
+  <!--End Pagination-->
+  <hr>
+  <footer class="container-fluid text-center">
+    
+    <h1>FOOTER</h1>
+  </footer>
+</body>
+
+
+</html>
