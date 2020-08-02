@@ -3,12 +3,14 @@ const rp = require('request-promise')
 const cheerio = require('cheerio')
 const bodyParser = require('body-parser')
 const puppeteer = require('puppeteer');
+const cors = require('cors')
 
 let app = express()
 let url_list = [];
 let data_list = []
 let status_scrape = 0
 
+app.use(cors())
 app.use(bodyParser.json())
 
 app.post('/content', (req, res) => {
@@ -25,6 +27,9 @@ app.post('/content', (req, res) => {
   res.send(resp)
 })
 
+app.post('/',(req,res)=>{
+  res.send('your request is success')
+})
 app.post('/scrape', (req, res) => {
   let body = req.body
   status_scrape = 0
@@ -66,7 +71,7 @@ let scraping1 = async (url) => {
 }
 
 let scraping2 = async (urls) => {
-  const browser = await puppeteer.launch({headless:false})
+  const browser = await puppeteer.launch()
   let page = await browser.newPage()
   for (let i = 0; i < urls.length; ++i) {
     try {
