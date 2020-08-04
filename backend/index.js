@@ -2,11 +2,11 @@ const express = require('express')
 const rp = require('request-promise')
 const cheerio = require('cheerio')
 const bodyParser = require('body-parser')
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer')
 const cors = require('cors')
 
 let app = express()
-let url_list = [];
+let url_list = []
 let data_list = []
 let status_scrape = 0
 
@@ -19,26 +19,26 @@ app.post('/content', (req, res) => {
     'status': status_scrape,
     'data': data_list 
   }
-  // if(!status_scrape){
-  //    resp = {status : status_scrape}
-  // }else{
-    
-
   res.send(resp)
 })
 
 app.post('/',(req,res)=>{
   res.send('your request is success')
 })
+
 app.post('/scrape', (req, res) => {
   let body = req.body
   status_scrape = 0
   data_list = []
   url_list = []
-  filter(body).then(() => {
+  try {
+    filter(body).then(() => {
     scraping2(url_list)
-  })
-  res.send({message:'success'})
+    res.send({message:'success'})
+  }) 
+  } catch (error) {
+    res.send({message:'failed'})
+  }
 })
 let filter = async (body) => {
   let status = true
@@ -56,7 +56,6 @@ let filter = async (body) => {
     }
   }
 }
-
 let scraping1 = async (url) => {
   try {
     let html = await rp(url)
