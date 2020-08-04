@@ -4,6 +4,7 @@ const cheerio = require('cheerio')
 const bodyParser = require('body-parser')
 const puppeteer = require('puppeteer')
 const cors = require('cors')
+const path = require('path')
 
 let app = express()
 let url_list = []
@@ -12,6 +13,8 @@ let status_scrape = 0
 
 app.use(cors())
 app.use(bodyParser.json())
+
+app.use(express.static(path.join(__dirname, '../frontend'))); //  "public" off of current is root
 
 app.post('/content', (req, res) => {
   let resp = 
