@@ -73,6 +73,7 @@
             <select class="custom-select" id="location">
               <option selected>Choose...</option>
               <option value="1">Boston</option>
+              <option value="1">Boston</option>
 
             </select>
           </div>
@@ -127,14 +128,15 @@
   $(document).ready(function () {
 
     $("#scrape").click(function () {
-      alert("is on");
+      
       $.ajax({
         type: 'POST',
         url: 'http://localhost:3000/scrape',
-        data: { location: "boston", query: "wanted" },
+        data: JSON.stringify({ location: "boston", query: "wanted" }),       
         dataType: "JSON",
-        success: function (data) {
-          alert("is in");
+        contentType: "application/json",
+        success: function (data) {    
+          console.log(data);    
           console.log("Good scrape");
         },
         error: function () {
@@ -183,7 +185,16 @@
           console.log(data);
 
           console.log(dat.data.length);
-
+          $("#results").empty();
+          for (let i = 0; i < dat.data.length; i++) {
+            var f = dat.data[i];
+            $("#results").append("<p class ='text-center' style='font-size: 25px;'><strong>Post </strong>" + (i + 1) + "</p>");
+            $("#results").append("<p><strong>Title: </strong>" + f[1].title + "</p>");
+            $("#results").append("<p><strong>ID: </strong>" + f[4].post_id + "</p>");
+            $("#results").append("<p><strong>Email: </strong>" + f[0].email + "</p>");
+            $("#results").append("<p><strong>Address: </strong>" + f[2].address + "</p>");
+            $("#results").append("<p style= 'width: 100%; '><strong>Desc: </strong>" + f[3].desc + "</p>");
+          }
 
         },
         error: function () {
@@ -195,7 +206,7 @@
     $("#location").change(function () {
       $.ajax({
         type: 'POST',
-        url: 'http://localhost:3000/scrape',
+        url: 'http://localhost:3000/',
         contentType : "application/json",
         data: JSON.stringify({ location: $('#location option:selected').text(), query: $('#keyword').val() }),
         dataType: "JSON",
