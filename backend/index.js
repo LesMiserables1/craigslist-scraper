@@ -32,7 +32,6 @@ app.post('/',(req,res)=>{
 
 app.post('/scrape', (req, res) => {
   let body = req.body
-  console.log(body)
   status_scrape = 0
   data_list = []
   url_list = []

@@ -179,7 +179,8 @@
       $.ajax({
         type: 'POST',
         url: 'http://localhost:3000/scrape',
-        data: { location: $('#location option:selected').text(), query: $('#keyword').val() },
+        contentType : "application/json",
+        data: JSON.stringify({ location: $('#location option:selected').text(), query: $('#keyword').val() }),
         dataType: "JSON",
         success: function (data) {
           var dat = JSON.parse(JSON.stringify(data));
