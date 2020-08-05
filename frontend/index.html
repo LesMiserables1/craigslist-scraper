@@ -24,19 +24,19 @@
 <script>
 
   function PrincipalData(a) {
-      alert("Ready this is america"+a);
-      /*$("#results").empty();
-      for (let i = 0; i < dat.data.length; i++) {
-        var f = dat.data[i];
-        $("#results").append("<p class ='text-center' style='font-size: 25px;'><strong>Post </strong>" + (i + 1) + "</p>");
-        $("#results").append("<p><strong>Title: </strong>" + f[1].title + "</p>");
-        $("#results").append("<p><strong>ID: </strong>" + f[4].post_id + "</p>");
-        $("#results").append("<p><strong>Email: </strong>" + f[0].email + "</p>");
-        $("#results").append("<p><strong>Address: </strong>" + f[2].address + "</p>");
-        $("#results").append("<p style= 'width: 100%; '><strong>Desc: </strong>" + f[3].desc + "</p>");
-      }*/
+    alert("Ready this is america" + a);
+    /*$("#results").empty();
+    for (let i = 0; i < dat.data.length; i++) {
+      var f = dat.data[i];
+      $("#results").append("<p class ='text-center' style='font-size: 25px;'><strong>Post </strong>" + (i + 1) + "</p>");
+      $("#results").append("<p><strong>Title: </strong>" + f[1].title + "</p>");
+      $("#results").append("<p><strong>ID: </strong>" + f[4].post_id + "</p>");
+      $("#results").append("<p><strong>Email: </strong>" + f[0].email + "</p>");
+      $("#results").append("<p><strong>Address: </strong>" + f[2].address + "</p>");
+      $("#results").append("<p style= 'width: 100%; '><strong>Desc: </strong>" + f[3].desc + "</p>");
+    }*/
 
-    }
+  }
 </script>
 
 <body>
@@ -73,7 +73,7 @@
             <select class="custom-select" id="location">
               <option selected>Choose...</option>
               <option value="1">Boston</option>
-              
+
             </select>
           </div>
 
@@ -114,6 +114,7 @@
   </div>
   </div>
   <button class="page"> aq</button>
+  <button id="scrape">Scrape</button>
   <!--End Pagination-->
   <hr>
   <footer class="container-fluid text-center">
@@ -125,18 +126,34 @@
 <script>
   $(document).ready(function () {
 
+    $("#scrape").click(function () {
+      alert("is on");
+      $.ajax({
+        type: 'POST',
+        url: 'http://localhost:3000/scrape',
+        data: { location: "boston", query: "wanted" },
+        dataType: "JSON",
+        success: function (data) {
+          alert("is in");
+          console.log("Good scrape");
+        },
+        error: function () {
+          alert("Ooops! Something was wrong with the scrape!");
+        }
+      });
 
+    });
     var BeginPage = 0;
     var EndPage = 5;
     var TotalPage = 0;
-    var demoNumer = 15/5;
+    var demoNumer = 15 / 5;
     pagination();
     function pagination() {
       TotalPage = demoNumer;
 
       //=======================================Create the pagination part
       for (let i = 0; i < TotalPage; i++) {
-        $("#PaginationPrincipal").append("<li class='page-item'><a class='page-link' href='javascript:PrincipalData("+i+")'>" + (i+1) + "</a></li>");
+        $("#PaginationPrincipal").append("<li class='page-item'><a class='page-link' href='javascript:PrincipalData(" + i + ")'>" + (i + 1) + "</a></li>");
         /*<li class="page-item disabled">
            <a class="page-link" hdref="#" tabindex="-1" aria-disabled="true">Previous</a>
          </li>
@@ -150,7 +167,7 @@
 
 
     }
-    
+
 
 
 
