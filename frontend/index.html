@@ -6,19 +6,38 @@
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
   <title>Bot Project</title>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
- 
+
   <link rel='stylesheet' type='text/css' media='screen' href='css/bootsrap/css/bootstrap.min.css'>
-  
+
   <!--Bootstrap references-->
   <script src="js/bootsrap/js/jquery-3.5.1.slim.min.js"></script>
   <script src="js/bootsrap/js/bootstrap.bundle.min.js"></script>
   <script src="js/bootsrap/js/bootstrap.bundle.js"></script>
   <script src="js/bootsrap/js/bootstrap.js"></script>
 
+  <!--JQuery references-->
+  <script src="js/jquery-3.5.1.min.js"></script>
+
   <link rel='stylesheet' type='text/css' media='screen' href='css/main.css'>
 
 </head>
+<script>
 
+  function PrincipalData(a) {
+      alert("Ready this is america"+a);
+      /*$("#results").empty();
+      for (let i = 0; i < dat.data.length; i++) {
+        var f = dat.data[i];
+        $("#results").append("<p class ='text-center' style='font-size: 25px;'><strong>Post </strong>" + (i + 1) + "</p>");
+        $("#results").append("<p><strong>Title: </strong>" + f[1].title + "</p>");
+        $("#results").append("<p><strong>ID: </strong>" + f[4].post_id + "</p>");
+        $("#results").append("<p><strong>Email: </strong>" + f[0].email + "</p>");
+        $("#results").append("<p><strong>Address: </strong>" + f[2].address + "</p>");
+        $("#results").append("<p style= 'width: 100%; '><strong>Desc: </strong>" + f[3].desc + "</p>");
+      }*/
+
+    }
+</script>
 
 <body>
   <!--Nav bar-->
@@ -33,8 +52,8 @@
         <li class="nav-item active">
           <a class="nav-link" href="#">About <span class="sr-only">(current)</span></a>
         </li>
-        
-        
+
+
         <li class="nav-item">
           <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
         </li>
@@ -49,24 +68,15 @@
         <!--Left container-->
         <div class="col-lg-3 card">
           <p class="text-center font-weight-bold">Filters:</p>
-          <p>Select country:</p>
+          <p>Select place:</p>
           <div class="input-group mb-3">
-            <select class="custom-select" id="inputGroupSelect01">
+            <select class="custom-select" id="location">
               <option selected>Choose...</option>
-              <option value="1">Canada</option>
-              <option value="2">USA</option>
-              <option value="3">Mexico</option>
+              <option value="1">Boston</option>
+              
             </select>
           </div>
-          <p>Select state:</p>
-          <div class="input-group mb-3">
-            <select class="custom-select" id="inputGroupSelect01">
-              <option selected>Choose...</option>
-              <option value="1">One</option>
-              <option value="2">Two</option>
-              <option value="3">Three</option>
-            </select>
-          </div>
+
         </div>
         <!--End Left container-->
 
@@ -74,13 +84,17 @@
 
         <div class="col-lg-9">
           <div class="input-group  mb-3">
-            <input type="text" class="form-control" placeholder="Key word" aria-label="Recipient's username"
-              aria-describedby="basic-addon2">
+            <input id="keyword" type="text" class="form-control" placeholder="Key word"
+              aria-label="Recipient's username" aria-describedby="basic-addon2">
             <div class="input-group-append">
-              <button class="btn btn-outline-secondary" type="button">Search</button>
+              <button id="process" class="btn btn-outline-secondary" type="button">Search</button>
             </div>
           </div>
           <hr>
+          <div id="results">
+
+          </div>
+
         </div>
         <!--End Right container-->
       </div>
@@ -93,27 +107,103 @@
   <!--Pagination-->
   <div class="card-body ">
     <nav aria-label="Page navigation example">
-      <ul class="pagination justify-content-center">
-        <li class="page-item disabled">
-          <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-        </li>
-        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
-        <li class="page-item">
-          <a class="page-link" href="#">Next</a>
-        </li>
+      <ul id="PaginationPrincipal" class="pagination justify-content-center">
+
       </ul>
     </nav>
   </div>
   </div>
+  <button class="page"> aq</button>
   <!--End Pagination-->
   <hr>
   <footer class="container-fluid text-center">
-    
+
     <h1>FOOTER</h1>
   </footer>
-</body>
 
+</body>
+<script>
+  $(document).ready(function () {
+
+
+    var BeginPage = 0;
+    var EndPage = 5;
+    var TotalPage = 0;
+    var demoNumer = 15/5;
+    pagination();
+    function pagination() {
+      TotalPage = demoNumer;
+
+      //=======================================Create the pagination part
+      for (let i = 0; i < TotalPage; i++) {
+        $("#PaginationPrincipal").append("<li class='page-item'><a class='page-link' href='javascript:PrincipalData("+i+")'>" + (i+1) + "</a></li>");
+        /*<li class="page-item disabled">
+           <a class="page-link" hdref="#" tabindex="-1" aria-disabled="true">Previous</a>
+         </li>
+         <li class="page-item active"><a class="page-link" href="#">1</a></li>
+         <li class="page-item" ><a class="page-link" href="javascript:prueba('2');"  >2</a></li>
+         <li class="page-item"><a class="page-link" href="#">3</a></li>
+         <li class="page-item">
+           <a class="page-link" href="#">Next</a>
+         </li>*/
+      }
+
+
+    }
+    
+
+
+
+    $("#process").click(function () {
+
+      $.ajax({
+        type: 'POST',
+        url: 'http://localhost:3000/content',
+        data: { location: "boston", query: "wanted" },
+        dataType: "JSON",
+        success: function (data) {
+          var dat = JSON.parse(JSON.stringify(data));
+          console.log(data);
+
+          console.log(dat.data.length);
+
+
+        },
+        error: function () {
+          alert("Ooops! Something was wrong!");
+        }
+      });
+
+    });
+    $("#location").change(function () {
+      $.ajax({
+        type: 'POST',
+        url: 'http://localhost:3000/scrape',
+        data: { location: $('#location option:selected').text(), query: $('#keyword').val() },
+        dataType: "JSON",
+        success: function (data) {
+          var dat = JSON.parse(JSON.stringify(data));
+          console.log(dat.data.length);
+          console.log(data);
+
+          $("#results").empty();
+          for (let i = 0; i < dat.data.length; i++) {
+            var f = dat.data[i];
+            $("#results").append("<p class ='text-center' style='font-size: 25px;'><strong>Post </strong>" + (i + 1) + "</p>");
+            $("#results").append("<p><strong>Title: </strong>" + f[1].title + "</p>");
+            $("#results").append("<p><strong>ID: </strong>" + f[4].post_id + "</p>");
+            $("#results").append("<p><strong>Email: </strong>" + f[0].email + "</p>");
+            $("#results").append("<p><strong>Address: </strong>" + f[2].address + "</p>");
+            $("#results").append("<p style= 'width: 100%; '><strong>Desc: </strong>" + f[3].desc + "</p>");
+          }
+        },
+        error: function () {
+          alert("Ooops! Something was wrong!");
+        }
+      });
+    });
+  });
+
+</script>
 
 </html>
