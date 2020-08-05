@@ -127,8 +127,7 @@
 <script>
   $(document).ready(function () {
 
-    $("#scrape").click(function () {
-      
+    $("#scrape").click(function () {  
       $.ajax({
         type: 'POST',
         url: 'http://localhost:3000/scrape',
@@ -169,22 +168,19 @@
 
 
     }
-
-
-
-
     $("#process").click(function () {
 
       $.ajax({
         type: 'POST',
         url: 'http://localhost:3000/content',
-        data: { location: "boston", query: "wanted" },
+        data: JSON.stringify({ location: "boston", query: "wanted" }),       
         dataType: "JSON",
+        contentType: "application/json",
         success: function (data) {
           var dat = JSON.parse(JSON.stringify(data));
           console.log(data);
 
-          console.log(dat.data.length);
+          //console.log(dat.data.length);
           $("#results").empty();
           for (let i = 0; i < dat.data.length; i++) {
             var f = dat.data[i];
