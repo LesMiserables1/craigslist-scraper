@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const puppeteer = require('puppeteer')
 const cors = require('cors')
 const path = require('path')
+const { contains } = require('cheerio')
 
 let app = express()
 let url_list = []
@@ -31,6 +32,7 @@ app.post('/',(req,res)=>{
 
 app.post('/scrape', (req, res) => {
   let body = req.body
+  console.log(body)
   status_scrape = 0
   data_list = []
   url_list = []
