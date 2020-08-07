@@ -59,7 +59,7 @@
 <body>
   <!--Nav bar-->
   <nav class="navbar navbar-expand-lg navbar-light bg-secondary navbar-custom">
-    <a class="navbar-brand" href="#">Craiglish bot</a>
+    <a class="navbar-brand" href="#">Craigslist bot</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -141,10 +141,10 @@
     $("#scrape").click(function () {
       $.ajax({
         type: 'POST',
-        //url: 'http://localhost:3000/scrape',
-        //data: JSON.stringify({ location: $('#location option:selected').text(), query: $('#keyword').val() }),       
-        //dataType: "JSON",
-        //contentType: "application/json",
+        url: 'http://localhost:3000/scrape',
+        data: JSON.stringify({ location: $('#location option:selected').text(), query: $('#keyword').val() }),       
+        dataType: "JSON",
+        contentType: "application/json",
         success: function (data) {
           console.log(data);
           console.log("Good scrape");
@@ -161,11 +161,10 @@
     $("#process").click(function () {
       $.ajax({
         type: 'POST',
-        url: 'Json.json',
-        //url: 'http://localhost:3000/content',
-        //data: JSON.stringify({ location: $('#location option:selected').text(), query: $('#keyword').val()}),       
-        //dataType: "JSON",
-        //contentType: "application/json",
+        url: 'http://localhost:3000/content',
+        data: JSON.stringify({ location: $('#location option:selected').text(), query: $('#keyword').val()}),       
+        dataType: "JSON",
+        contentType: "application/json",
         success: function (data) {
           var dat = JSON.parse(JSON.stringify(data));
           $("#results").empty();
