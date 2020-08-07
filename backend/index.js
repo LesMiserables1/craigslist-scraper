@@ -5,45 +5,44 @@ const bodyParser = require('body-parser')
 const puppeteer = require('puppeteer')
 const cors = require('cors')
 const path = require('path')
-const { contains } = require('cheerio')
 
 let app = express()
 let url_list = []
 let data_list = []
-let status_scrape = 0
 
 app.use(cors())
 app.use(bodyParser.json())
 
 app.use(express.static(path.join(__dirname, '../frontend'))); //  "public" off of current is root
 
-app.post('/content', (req, res) => {
-  let resp = 
-  {
-    'status': status_scrape,
-    'data': data_list 
-  }
-  res.send(resp)
-})
+// app.post('/content', (req, res) => {
+//   let resp = 
+//   {
+//     'status': status_scrape,
+//     'data': data_list 
+//   }
+//   res.send(resp)
+// })
 
 app.post('/',(req,res)=>{
   res.send('your request is success')
 })
 
-app.post('/scrape', (req, res) => {
+app.post('/scrape', async(req, res) => {
   let body = req.body
   status_scrape = 0
   data_list = []
   url_list = []
   try {
-    filter(body).then(() => {
-    scraping2(url_list)
-    res.send({message:'success'})
+    filter(body).then(async () => {
+    await scraping2(url_list)
+    res.send({message:'success','data' : data_list})
   }) 
   } catch (error) {
     res.send({message:'failed'})
   }
 })
+
 let filter = async (body) => {
   let status = true
   let page_num = 0;
@@ -129,7 +128,6 @@ let scraping2 = async (urls) => {
       continue
     }
   }
-  status_scrape = 1
   return data_list
 }
 
