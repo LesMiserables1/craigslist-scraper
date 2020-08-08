@@ -40,17 +40,17 @@
     var info;
     var BeginPage = a - 5;
     var EndPage = a;
-    
-   $("#results").children().hide();
-    for (let i = BeginPage; i < EndPage; i++) {
-      $('#'+i+'a').show(); 
-      $('#'+i+'b').show(); 
-      $('#'+i+'c').show(); 
-      $('#'+i+'d').show(); 
-      $('#'+i+'e').show(); 
-      $('#'+i+'f').show(); 
 
-      
+    $("#results").children().hide();
+    for (let i = BeginPage; i < EndPage; i++) {
+      $('#' + i + 'a').show();
+      $('#' + i + 'b').show();
+      $('#' + i + 'c').show();
+      $('#' + i + 'd').show();
+      $('#' + i + 'e').show();
+      $('#' + i + 'f').show();
+
+
     }
 
   }
@@ -93,6 +93,7 @@
               <option value="1">boston</option>
             </select>
           </div>
+          
         </div>
         <!--End Left container-->
 
@@ -106,6 +107,20 @@
             </div>
           </div>
           <hr>
+          <!--Alerts-->
+          <div id="alertscraping" class="alert alert-warning collapse" role="alert">
+            Data is been scraping...
+          </div>
+          <div id="alertdone" class="alert alert-success collapse" role="alert">
+            Data is ready.
+          </div>
+          <div id="alerterror" class="alert alert-danger collapse" role="alert">
+            Something was wrong.
+          </div>
+          <div id="alertresults" class="alert alert-danger collapse" role="alert">
+            <h4 class="text-center">Not data found! </h4>
+           </div>
+          <!--End Alerts-->
           <div id="results">
           </div>
         </div>
@@ -122,8 +137,7 @@
     </nav>
   </div>
   </div>
-  <button id="scrape">Scrape</button>
-  <button id="prueba">prueba</button>
+
   <!--End Pagination-->
   <hr>
   <footer class="container-fluid text-center">
@@ -134,73 +148,83 @@
 </body>
 <script>
   $(document).ready(function () {
-   
-    
 
-    //=============================Event when click the scrape bottom
-    $("#scrape").click(function () {
+    //=============================Event when click the Search bottom
+    $("#process").click(function () {
+      $('#alertscraping').show();
+      $('#alertresults').hide();
+      $("#process").attr("disabled", true);
+
+
       $.ajax({
+        //url: 'Json.json',
         type: 'POST',
         url: 'http://localhost:3000/scrape',
-        data: JSON.stringify({ location: $('#location option:selected').text(), query: $('#keyword').val() }),       
+        data: JSON.stringify({ location: $('#location option:selected').text(), query: $('#keyword').val() }),
         dataType: "JSON",
         contentType: "application/json",
-        success: function (data) {
-          console.log(data);
-          console.log("Good scrape");
-        },
-        error: function () {
-          alert("Ooops! Something was wrong with the scrape!");
-        }
-      });
 
-    });
-    //===============================End event when click the scrape bottom
-
-    //===============================Event when click the search bottom
-    $("#process").click(function () {
-      $.ajax({
-        type: 'POST',
-        url: 'http://localhost:3000/content',
-        data: JSON.stringify({ location: $('#location option:selected').text(), query: $('#keyword').val()}),       
-        dataType: "JSON",
-        contentType: "application/json",
         success: function (data) {
+          $("#alertscraping").hide();
+          $("#process").attr("disabled", false);
+
+
+         
+
           var dat = JSON.parse(JSON.stringify(data));
-          $("#results").empty();
-          for (let i = 0; i < dat.data.length; i++) {
-             var f = dat.data[i];
-            $("#results").append("<p id='"+i+"a' class ='text-center' style='font-size: 25px;display:none;' ><strong>Post </strong>" + (i + 1) + "</p>");
-            $("#results").append("<p id='"+i+"b' style='display:none;'><strong>Title: </strong>" + f[1].title + "</p>");
-            $("#results").append("<p id='"+i+"c' style='display:none;'><strong>ID: </strong>" + f[4].post_id + "</p>");
-            $("#results").append("<p id='"+i+"d' style='display:none;'><strong>Email: </strong>" + f[0].email + "</p>");
-            $("#results").append("<p id='"+i+"e' style='display:none;'><strong>Address: </strong>" + f[2].address + "</p>");
-            $("#results").append("<p style= 'width: 100%; display:none;' id='"+i+"f'><strong>Desc: </strong>" + f[3].desc + "</p>");
-          }
+          if (dat.data.length != 0) {
+            $('#alertdone').fadeIn(1000);
+          setTimeout(function () {
+            $('#alertdone').fadeOut(1000);
+          }, 3000);
 
-           //=======================================Create the pagination part
-          var a = 0;
-          $("#PaginationPrincipal").empty();
-          for (let i = 0; i < dat.data.length / 5; i++) {
-            var f = dat.data[i];
-            a = a + 5;
-           
-            $("#PaginationPrincipal").append("<li class='page-item'><a class='page-link' href='javascript:PrincipalData(" +a+ ")'>" + (i + 1) + "</a></li>");
-          }
-          //========================================End of pagination function
-          PrincipalData("5");
+            $("#results").empty();
+            for (let i = 0; i < dat.data.length; i++) {
+              var f = dat.data[i];
+              $("#results").append("<p id='" + i + "a' class ='text-center' style='font-size: 25px;display:none;' ><strong>Post </strong>" + (i + 1) + "</p>");
+              $("#results").append("<p id='" + i + "b' style='display:none;'><strong>Title: </strong>" + f[1].title + "</p>");
+              $("#results").append("<p id='" + i + "c' style='display:none;'><strong>ID: </strong>" + f[4].post_id + "</p>");
+              $("#results").append("<p id='" + i + "d' style='display:none;'><strong>Email: </strong>" + f[0].email + "</p>");
+              $("#results").append("<p id='" + i + "e' style='display:none;'><strong>Address: </strong>" + f[2].address + "</p>");
+              $("#results").append("<p style= 'width: 100%; display:none;' id='" + i + "f'><strong>Desc: </strong>" + f[3].desc + "</p>");
+            }
 
+            //=======================================Create the pagination part
+            var a = 0;
+            $("#PaginationPrincipal").empty();
+            for (let i = 0; i < dat.data.length / 5; i++) {
+              var f = dat.data[i];
+              a = a + 5;
+
+              $("#PaginationPrincipal").append("<li class='page-item'><a class='page-link' href='javascript:PrincipalData(" + a + ")'>" + (i + 1) + "</a></li>");
+            }
+            //========================================End of pagination function
+            PrincipalData("5");
+          } else {
+            console.log(data);
+            $('#alertresults').show();
+
+          }
 
         },
         error: function () {
-          alert("Ooops! Something was wrong!");
+          $("#alertscraping").hide();
+
+          $('#alerterror').fadeIn(1000);
+          setTimeout(function () {
+            $('#alerterror').fadeOut(1000);
+          }, 3000);
+
         }
       });
+
     });
-    //===============================End event when click the search bottom
+    //===============================End event when click the Search bottom
+
+    
 
     //===============================Event when dropdown change
-    $("#location").change(function () {
+    /*$("#location").change(function () {
       $.ajax({
         type: 'POST',
         url: 'Json.json',
@@ -217,7 +241,7 @@
           alert("Ooops! Something was wrong!");
         }
       });
-    });
+    });*/
     //===============================End event when dropdown change
   });
 
