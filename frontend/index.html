@@ -8,7 +8,7 @@
   <meta name='viewport' content='width=device-width, initial-scale=1'>
 
   <link rel='stylesheet' type='text/css' media='screen' href='css/bootsrap/css/bootstrap.min.css'>
-
+  <link rel="icon" type="image/png" href="img/AOS Square.jpg" />
   <!--Bootstrap references-->
   <script src="js/bootsrap/js/jquery-3.5.1.slim.min.js"></script>
   <script src="js/bootsrap/js/bootstrap.bundle.min.js"></script>
@@ -67,8 +67,7 @@
           <div class="input-group mb-3">
             <select class="custom-select" id="location">
               <option value="0" selected>Choose...</option>
-              <option value="1">boston</option>
-              <option value="1">boston</option>
+              
             </select>
           </div>
 
@@ -130,6 +129,27 @@
 </body>
 <script>
   $(document).ready(function () {
+    //==================================to add the cities
+    $.ajax({
+          //url: 'Json.json',
+          type: 'POST', 
+         url: 'countries.json',
+          dataType: "JSON",
+          contentType: "application/json",
+          timeout: 360000,
+          success: function (data) {                        
+              for (let i = 0; i < data.length; i++) {
+                var name = data[i].display_name.charAt(0).toUpperCase() + data[i].display_name.slice(1);
+                $("#location").append("<option value='"+data[i].value+"' >"+name+"</option>");
+              }           
+          },
+          error: function () {
+          alert("Error not cities found ");
+
+          }
+        });
+      
+    //==================================End to add the cities
     //=============================Event when click the Search bottom
     $("#process").click(function () {
       if ($("#location").val() == "0" || $("#keyword").val().trim() == "") {
