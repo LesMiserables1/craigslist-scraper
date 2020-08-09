@@ -48,8 +48,14 @@ let filter = async (body) => {
   let status = true
   let page_num = 0;
   while (status) {
-    let url = `${body.location}search/off?query=${body.query}&availabilityMode=0&s=${page_num}`
-    let html_page = await rp(url)
+    let html_page,url
+    try {
+      url = `${body.location}search/off?query=${body.query}&availabilityMode=0&s=${page_num}`
+      html_page = await rp(url)
+    } catch (error) {
+      url = `https://${body.location}.craigslist.org/search/off?query=${body.query}&availabilityMode=0&s=${page_num}`
+      html_page = await rp(url)
+    }
     const $ = cheerio.load(html_page)
     let page_count = $('span[class="button pagenum"]').first().text()
     if (page_count == 'no results') {
