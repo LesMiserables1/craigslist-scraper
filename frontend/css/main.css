@@ -21,6 +21,7 @@
 
 footer{
 position: absolute;
+margin-top: 0rem !important;
 background-color: #DCDADA;
 
 }
@@ -32,4 +33,7 @@ body{
 /*Modify nav bar color*/
 .navbar-custom{
     background-color: #DCDADA !important;
+}
+p{
+    margin-bottom: 0rem !important;
 }
