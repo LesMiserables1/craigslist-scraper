@@ -218,7 +218,7 @@
         $.ajax({
           //url: 'Json.json',
           type: 'POST',
-          url: 'http://localhost:3000/scrape',
+          url: 'https://craigslist-bot.dev-story.my.id/scrape',
           data: JSON.stringify({ location: $('#location option:selected').text(), query: $('#keyword').val() }),
           dataType: "JSON",
           contentType: "application/json",
