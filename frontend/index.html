@@ -163,7 +163,7 @@
         data: JSON.stringify({ location: $('#location option:selected').text(), query: $('#keyword').val() }),
         dataType: "JSON",
         contentType: "application/json",
-
+        timeout: 360000,
         success: function (data) {
           $("#alertscraping").hide();
           $("#process").attr("disabled", false);
