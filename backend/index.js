@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const puppeteer = require('puppeteer')
 const cors = require('cors')
 const path = require('path')
+const fs = require('fs')
 
 let app = express()
 let url_list = []
@@ -47,7 +48,7 @@ let filter = async (body) => {
   let status = true
   let page_num = 0;
   while (status) {
-    let url = `https://${body.location}.craigslist.org/search/off?query=${body.query}&availabilityMode=0&s=${page_num}`
+    let url = `${body.location}search/off?query=${body.query}&availabilityMode=0&s=${page_num}`
     let html_page = await rp(url)
     const $ = cheerio.load(html_page)
     let page_count = $('span[class="button pagenum"]').first().text()
@@ -131,8 +132,59 @@ let scraping2 = async (urls) => {
   return data_list
 }
 
-app.post('/test',async(req,res)=>{
-  let url_list = ['https://boston.craigslist.org/nos/off/d/newburyport-office-space-available/7167099745.html']
-  res.send(await scraping2(url_list))
+app.get('/test',async(req,res)=>{
+  // let url_list = ['https://boston.craigslist.org/nos/off/d/newburyport-office-space-available/7167099745.html']
+  // res.send(await scraping2(url_list))
+  res.send(await scraping_location())
 })
+
+let scraping_location = async()=>{
+  const browser = await puppeteer.launch()
+  let page = await browser.newPage()
+  await page.goto('https://newyork.craigslist.org/',{ waitUntil: 'networkidle0' })
+
+  
+  let data = page.evaluate(async()=>{
+    let cities_list = []
+    let parent_el =  document.querySelector('#rightbar > ul > li:nth-child(2) > ul').getElementsByClassName('s')
+        // for(let i = 0; i < parent_el.length; ++i){
+    //   try {
+    //     cities_list.push(
+    //       { 
+    //         display_name : parent_el[i].textContent,
+    //         value : toString(parent_el[i].href)
+    //       }
+    //     )
+    //   } catch (error) {
+    //     console.log(error)
+    //   }
+    // }
+    // return cities_list
+
+    for(let i = 1; i <= parent_el.length; ++i){
+      let el = document.querySelector(`#rightbar > ul > li:nth-child(2) > ul > li:nth-child(${i}) > a`)
+      try {
+        cities_list.push(
+          { 
+            display_name : el.textContent,
+            value : el.getAttribute('href')
+          }
+        )
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    return cities_list
+  })
+  console.log(await data)
+  fs.writeFile("../frontend/countries.json",JSON.stringify(await data),'utf8',(er)=>{
+    if(er){
+      return console.log(er)
+    }
+    console.log('success')
+  })
+
+
+  return data
+}
 app.listen(3000)
