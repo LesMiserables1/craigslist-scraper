@@ -4,7 +4,7 @@
 <head>
   <meta charset='utf-8'>
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-  <title>Bot Project</title>
+  <title>Scraper bot </title>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
 
   <link rel='stylesheet' type='text/css' media='screen' href='css/bootsrap/css/bootstrap.min.css'>
@@ -22,22 +22,7 @@
 
 </head>
 <script>
-  var demoArray = ['sell', 'buy', '2342342442', 'jesus1', 'america'
-    , 'sell', 'buy', '2342342442', 'jesus2', 'america'
-    , 'sell', 'buy', '2342342442', 'jesus3', 'america'
-    , 'sell', 'buy', '2342342442', 'jesus4', 'america'
-    , 'sell', 'buy', '2342342442', 'jesus5', 'america'
-    , 'sell', 'buy', '2342342442', 'jesus6', 'america'
-    , 'sell', 'buy', '2342342442', 'jesus7', 'america'
-    , 'sell', 'buy', '2342342442', 'jesus8', 'america'
-    , 'sell', 'buy', '2342342442', 'jesus9', 'america'
-    , 'sell', 'buy', '2342342442', 'jesus10', 'america'
-    , 'sell', 'buy', '2342342442', 'jesus11', 'america'
-    , 'sell', 'buy', '2342342442', 'jesus12', 'america'];
-
   function PrincipalData(a) {
-    // console.log(dat);
-    var info;
     var BeginPage = a - 5;
     var EndPage = a;
 
@@ -59,21 +44,14 @@
 <body>
   <!--Nav bar-->
   <nav class="navbar navbar-expand-lg navbar-light bg-secondary navbar-custom">
-    <a class="navbar-brand" href="#">Craigslist bot</a>
+    <a class="navbar-brand" href="#">Craigslist scraper bot</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ml-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">About <span class="sr-only">(current)</span></a>
-        </li>
 
-
-        <li class="nav-item">
-          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-        </li>
       </ul>
     </div>
   </nav>
@@ -84,16 +62,16 @@
       <div class="row">
         <!--Left container-->
         <div class="col-lg-3 card">
-          <p class="text-center font-weight-bold">Filters:</p>
-          <p>Select place:</p>
+          <p class="text-center font-weight-bold" style="font-size: 23px;">Filters:</p>
+          <p>Select city:</p>
           <div class="input-group mb-3">
             <select class="custom-select" id="location">
-              <option selected>Choose...</option>
+              <option value="0" selected>Choose...</option>
               <option value="1">boston</option>
               <option value="1">boston</option>
             </select>
           </div>
-          
+
         </div>
         <!--End Left container-->
 
@@ -111,6 +89,9 @@
           <div id="alertscraping" class="alert alert-warning collapse" role="alert">
             Data is been scraping...
           </div>
+          <div id="alertfilter" class="alert alert-danger collapse" role="alert">
+            Please add both filters.
+          </div>
           <div id="alertdone" class="alert alert-success collapse" role="alert">
             Data is ready.
           </div>
@@ -119,130 +100,184 @@
           </div>
           <div id="alertresults" class="alert alert-danger collapse" role="alert">
             <h4 class="text-center">Not data found! </h4>
-           </div>
+          </div>
           <!--End Alerts-->
           <div id="results">
           </div>
+          <!--Pagination-->
+          <div class="card-body ">
+            <nav aria-label="Page navigation example">
+              <ul id="PaginationPrincipal" class="pagination justify-content-center">
+              </ul>
+            </nav>
+          </div>
         </div>
-        <!--End Right container-->
+        <!--End Pagination-->
       </div>
+      <!--End Right container-->
     </div>
   </div>
+  </div>
   <!--End principal-->
-  <!--Pagination-->
-  <div class="card-body ">
-    <nav aria-label="Page navigation example">
-      <ul id="PaginationPrincipal" class="pagination justify-content-center">
-      </ul>
-    </nav>
-  </div>
-  </div>
 
-  <!--End Pagination-->
-  <hr>
+  <hr style=" margin-bottom: 0.5rem !important;">
   <footer class="container-fluid text-center">
 
-    <h1>FOOTER</h1>
+    <h1 style="margin-top: 1rem !important;">AllOffice.Space inc</h1>
+    <p style="margin-bottom: 1rem !important;">This site was designed and develop by AllOffice.Space inc. ©2020 All rights reserved. </p>
   </footer>
 
 </body>
 <script>
   $(document).ready(function () {
-
     //=============================Event when click the Search bottom
     $("#process").click(function () {
-      $('#alertscraping').show();
-      $('#alertresults').hide();
-      $("#process").attr("disabled", true);
+      if ($("#location").val() == "0" || $("#keyword").val().trim() == "") {
+        $("#alertfilter").show();
+      } else {
+        $("#alertfilter").hide();
+        $('#alertscraping').show();
+        $('#alertresults').hide();
+        $("#process").attr("disabled", true);
 
 
-      $.ajax({
-        //url: 'Json.json',
-        type: 'POST',
-        url: 'http://localhost:3000/scrape',
-        data: JSON.stringify({ location: $('#location option:selected').text(), query: $('#keyword').val() }),
-        dataType: "JSON",
-        contentType: "application/json",
-        timeout: 360000,
-        success: function (data) {
-          $("#alertscraping").hide();
-          $("#process").attr("disabled", false);
+        $.ajax({
+          //url: 'Json.json',
+          type: 'POST',
+         url: 'http://localhost:3000/scrape',
+          data: JSON.stringify({ location: $('#location option:selected').text(), query: $('#keyword').val() }),
+          dataType: "JSON",
+          contentType: "application/json",
+          timeout: 360000,
+          success: function (data) {
+            $("#alertscraping").hide();
+            $("#process").attr("disabled", false);
+            var dat = JSON.parse(JSON.stringify(data));
+            if (dat.data.length != 0) {
+              $('#alertdone').fadeIn(1000);
+              setTimeout(function () {
+                $('#alertdone').fadeOut(1000);
+              }, 5000);
 
+              $("#results").empty();
+              for (let i = 0; i < dat.data.length; i++) {
+                var f = dat.data[i];
+                $("#results").append("<p id='" + i + "a' class ='text-center' style='font-size: 25px;display:none;' ><strong>Post </strong>" + (i + 1) + "</p>");
+                $("#results").append("<p id='" + i + "b' style='display:none;'><strong>Title: </strong>" + f[1].title + "</p>");
+                $("#results").append("<p id='" + i + "c' style='display:none;'><strong>ID: </strong>" + f[4].post_id + "</p>");
+                $("#results").append("<p id='" + i + "d' style='display:none;'><strong>Email: </strong>" + f[0].email + "</p>");
+                $("#results").append("<p id='" + i + "e' style='display:none;'><strong>Address: </strong>" + f[2].address + "</p>");
+                $("#results").append("<p style= 'width: 100%; display:none;' id='" + i + "f'><strong>Desc: </strong>" + f[3].desc + "</p>");
+              }
 
-         
+              //=======================================Create the pagination part
+              var a = 0;
+              $("#PaginationPrincipal").empty();
+              for (let i = 0; i < dat.data.length / 5; i++) {
+                var f = dat.data[i];
+                a = a + 5;
 
-          var dat = JSON.parse(JSON.stringify(data));
-          if (dat.data.length != 0) {
-            $('#alertdone').fadeIn(1000);
-          setTimeout(function () {
-            $('#alertdone').fadeOut(1000);
-          }, 3000);
+                $("#PaginationPrincipal").append("<li class='page-item'><a style='color:black;' class='page-link' href='javascript:PrincipalData(" + a + ")'>" + (i + 1) + "</a></li>");
+              }
+              //========================================End of pagination function
+              PrincipalData("5");
+            } else {
+              console.log(data);
+              $('#alertresults').show();
 
-            $("#results").empty();
-            for (let i = 0; i < dat.data.length; i++) {
-              var f = dat.data[i];
-              $("#results").append("<p id='" + i + "a' class ='text-center' style='font-size: 25px;display:none;' ><strong>Post </strong>" + (i + 1) + "</p>");
-              $("#results").append("<p id='" + i + "b' style='display:none;'><strong>Title: </strong>" + f[1].title + "</p>");
-              $("#results").append("<p id='" + i + "c' style='display:none;'><strong>ID: </strong>" + f[4].post_id + "</p>");
-              $("#results").append("<p id='" + i + "d' style='display:none;'><strong>Email: </strong>" + f[0].email + "</p>");
-              $("#results").append("<p id='" + i + "e' style='display:none;'><strong>Address: </strong>" + f[2].address + "</p>");
-              $("#results").append("<p style= 'width: 100%; display:none;' id='" + i + "f'><strong>Desc: </strong>" + f[3].desc + "</p>");
             }
 
-            //=======================================Create the pagination part
-            var a = 0;
-            $("#PaginationPrincipal").empty();
-            for (let i = 0; i < dat.data.length / 5; i++) {
-              var f = dat.data[i];
-              a = a + 5;
+          },
+          error: function () {
+            $("#alertscraping").hide();
 
-              $("#PaginationPrincipal").append("<li class='page-item'><a class='page-link' href='javascript:PrincipalData(" + a + ")'>" + (i + 1) + "</a></li>");
-            }
-            //========================================End of pagination function
-            PrincipalData("5");
-          } else {
-            console.log(data);
-            $('#alertresults').show();
+            $('#alerterror').fadeIn(1000);
+            setTimeout(function () {
+              $('#alerterror').fadeOut(1000);
+            }, 5000);
 
           }
+        });
+      }
 
-        },
-        error: function () {
-          $("#alertscraping").hide();
-
-          $('#alerterror').fadeIn(1000);
-          setTimeout(function () {
-            $('#alerterror').fadeOut(1000);
-          }, 3000);
-
-        }
-      });
 
     });
     //===============================End event when click the Search bottom
 
-    
-
     //===============================Event when dropdown change
-    /*$("#location").change(function () {
-      $.ajax({
-        type: 'POST',
-        url: 'Json.json',
-        // url: 'http://localhost:3000/content',
-        // contentType : "application/json",
-        // data: JSON.stringify({ location: $('#location option:selected').text(), query: $('#keyword').val() }),
-        // dataType: "JSON",
-        success: function (data) {
-          var dat = JSON.parse(JSON.stringify(data));
-          console.log(dat.data.length);
-          console.log(data);
-        },
-        error: function () {
-          alert("Ooops! Something was wrong!");
-        }
-      });
-    });*/
+    $("#location").change(function () {
+      if ($("#location").val() == "0" || $("#keyword").val() == "") {
+        $("#alertfilter").show();
+      } else {
+        $("#alertfilter").hide();
+        $('#alertscraping').show();
+        $('#alertresults').hide();
+        $("#process").attr("disabled", true);
+
+
+        $.ajax({
+          //url: 'Json.json',
+          type: 'POST',
+          url: 'http://localhost:3000/scrape',
+          data: JSON.stringify({ location: $('#location option:selected').text(), query: $('#keyword').val() }),
+          dataType: "JSON",
+          contentType: "application/json",
+          timeout: 360000,
+          success: function (data) {
+            $("#alertscraping").hide();
+            $("#process").attr("disabled", false);
+            var dat = JSON.parse(JSON.stringify(data));
+            if (dat.data.length != 0) {
+              $('#alertdone').fadeIn(1000);
+              setTimeout(function () {
+                $('#alertdone').fadeOut(1000);
+              }, 5000);
+
+              $("#results").empty();
+              for (let i = 0; i < dat.data.length; i++) {
+                var f = dat.data[i];
+                $("#results").append("<p id='" + i + "a' class ='text-center' style='font-size: 25px;display:none;' ><strong>Post </strong>" + (i + 1) + "</p>");
+                $("#results").append("<p id='" + i + "b' style='display:none;'><strong>Title: </strong>" + f[1].title + "</p>");
+                $("#results").append("<p id='" + i + "c' style='display:none;'><strong>ID: </strong>" + f[4].post_id + "</p>");
+                $("#results").append("<p id='" + i + "d' style='display:none;'><strong>Email: </strong>" + f[0].email + "</p>");
+                $("#results").append("<p id='" + i + "e' style='display:none;'><strong>Address: </strong>" + f[2].address + "</p>");
+                $("#results").append("<p style= 'width: 100%; display:none;' id='" + i + "f'><strong>Desc: </strong>" + f[3].desc + "</p>");
+              }
+
+              //=======================================Create the pagination part
+              var a = 0;
+              $("#PaginationPrincipal").empty();
+              for (let i = 0; i < dat.data.length / 5; i++) {
+                var f = dat.data[i];
+                a = a + 5;
+
+                $("#PaginationPrincipal").append("<li class='page-item'><a style='color:black;' class='page-link' href='javascript:PrincipalData(" + a + ")'>" + (i + 1) + "</a></li>");
+              }
+              //========================================End of pagination function
+              PrincipalData("5");
+            } else {
+              console.log(data);
+              $('#alertresults').show();
+
+            }
+
+          },
+          error: function () {
+            $("#alertscraping").hide();
+
+            $('#alerterror').fadeIn(1000);
+            setTimeout(function () {
+              $('#alerterror').fadeOut(1000);
+            }, 5000);
+
+          }
+        });
+      }
+
+    });
     //===============================End event when dropdown change
+
+
   });
 
 
