@@ -51,7 +51,6 @@ let filter = async (body) => {
   while (status) {
     let html_page,url
     url = `${body.location}search/off?query=${body.query}&availabilityMode=0&s=${page_num}`
-    console.log(url)
     html_page = await rp(url)
 
     const $ = cheerio.load(html_page)
