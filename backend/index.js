@@ -10,20 +10,21 @@ const fs = require('fs')
 let app = express()
 let url_list = []
 let data_list = []
+let status_scrape;
 
 app.use(cors())
 app.use(bodyParser.json())
 
 app.use(express.static(path.join(__dirname, '../frontend'))); //  "public" off of current is root
 
-// app.post('/content', (req, res) => {
-//   let resp = 
-//   {
-//     'status': status_scrape,
-//     'data': data_list 
-//   }
-//   res.send(resp)
-// })
+app.post('/content', (req, res) => {
+  let resp = 
+  {
+    'status': status_scrape,
+    'data': data_list 
+  }
+  res.send(resp)
+})
 
 app.post('/',(req,res)=>{
   res.send('your request is success')
@@ -36,9 +37,9 @@ app.post('/scrape', async(req, res) => {
   url_list = []
   try {
     filter(body).then(async () => {
-    await scraping2(url_list)
-    res.send({message:'success','data' : data_list})
+    scraping2(url_list)
   }) 
+  res.send({message:'success'})
   } catch (error) {
     res.send({message:'failed'})
   }
@@ -49,13 +50,10 @@ let filter = async (body) => {
   let page_num = 0;
   while (status) {
     let html_page,url
-    try {
-      url = `${body.location}search/off?query=${body.query}&availabilityMode=0&s=${page_num}`
-      html_page = await rp(url)
-    } catch (error) {
-      url = `https://${body.location}.craigslist.org/search/off?query=${body.query}&availabilityMode=0&s=${page_num}`
-      html_page = await rp(url)
-    }
+    url = `${body.location}search/off?query=${body.query}&availabilityMode=0&s=${page_num}`
+    console.log(url)
+    html_page = await rp(url)
+
     const $ = cheerio.load(html_page)
     let page_count = $('span[class="button pagenum"]').first().text()
     if (page_count == 'no results') {
@@ -135,6 +133,7 @@ let scraping2 = async (urls) => {
       continue
     }
   }
+  status_scrape = 1
   return data_list
 }
 
