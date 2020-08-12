@@ -8,14 +8,14 @@
   <meta name='viewport' content='width=device-width, initial-scale=1'>
 
   <link rel='stylesheet' type='text/css' media='screen' href='css/bootsrap/css/bootstrap.min.css'>
+  <link rel='stylesheet' type='text/css' media='screen' href='css/loading.css'>
   <link rel="icon" type="image/png" href="img/AOS Square.jpg" />
   <!--Bootstrap references-->
   <script src="js/bootsrap/js/jquery-3.5.1.slim.min.js"></script>
   <script src="js/bootsrap/js/bootstrap.bundle.min.js"></script>
   <script src="js/bootsrap/js/bootstrap.bundle.js"></script>
   <script src="js/bootsrap/js/bootstrap.js"></script>
-  <script src="loading/jquery-easy-loading/dist/jquery.loading.js"></script>
-  <script src="loading/jquery-easy-loading/dist/jquery.loading.min.js"></script>
+
 
   <!--JQuery references-->
   <script src="js/jquery-3.5.1.min.js"></script>
@@ -71,6 +71,7 @@
               <option value="0" selected>Choose...</option>
 
             </select>
+
           </div>
 
         </div>
@@ -86,24 +87,38 @@
             </div>
           </div>
           <hr>
-          
-          <!--Alerts-->
-          <div id="alertscraping" class="alert alert-warning collapse" role="alert">
-            Data is been scraping...
+
+          <!--Loading-->
+          <div id="alertscraping" class=" " style="display:none;margin-left: 38%;" role="alert">
+            <strong style="font-size: 20px;"> Data is been scraping...</strong>
           </div>
+          <div id="alertgetting" class=" " style="display:none;margin-left: 38%;" role="alert">
+            <strong style="font-size: 20px;"> Data is been getting...</strong>
+          </div>
+          <div id="loading" class="lds-ring col-lg-2" style="display:none;margin-left: 43%;">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <!--End Loading-->
+
+          <!--Alerts-->
+
           <div id="alertfilter" class="alert alert-danger collapse" role="alert">
             Please add both filters.
           </div>
-          <div id="alertdone" class="alert alert-success collapse" role="alert">
+          <div id="alertdone" class="alert alert-success collapse " role="alert">
             Data is ready.
           </div>
-          <div id="alerterror" class="alert alert-danger collapse" role="alert">
+          <div id="alerterror" class="alert alert-danger collapse " role="alert">
             Something was wrong.
           </div>
-          <div id="alertresults" class="alert alert-danger collapse" role="alert">
+          <div id="alertresults" class="alert alert-danger collapse " role="alert">
             <h4 class="text-center">Not data found! </h4>
           </div>
           <!--End Alerts-->
+
           <div id="results">
           </div>
           <!--Pagination-->
@@ -119,6 +134,9 @@
       <!--End Right container-->
     </div>
   </div>
+
+  <input id="StatusContent" type="hidden">
+  <input id="StatusScrape" type="hidden" value="0">
   </div>
   <!--End principal-->
 
@@ -133,15 +151,19 @@
 </body>
 <script>
   $(document).ready(function () {
+
+    var myVar;
     //==================================to add the cities
     $.ajax({
       //url: 'Json.json',
       type: 'get',
       url: 'https://craigslist-bot.dev-story.my.id/countries.json',
+      //url: 'countries.json',
       dataType: "JSON",
       contentType: "application/json",
       timeout: 360000,
       success: function (data) {
+
         for (let i = 0; i < data.length; i++) {
           var name = data[i].display_name.charAt(0).toUpperCase() + data[i].display_name.slice(1);
           $("#location").append("<option value='" + data[i].value + "' >" + name + "</option>");
@@ -156,151 +178,39 @@
     //==================================End to add the cities
     //=============================Event when click the Search bottom
     $("#process").click(function () {
+      myVar = setInterval(check, 5000);
       if ($("#location").val() == "0" || $("#keyword").val().trim() == "") {
         $("#alertfilter").show();
       } else {
+        $('#loading').show();
         $("#alertfilter").hide();
         $('#alertscraping').show();
         $('#alertresults').hide();
         $("#process").attr("disabled", true);
+        $("#StatusContent").attr("value", "0");
+        $("#StatusScrape").attr("value", "0");
 
-
-        $.ajax({
-          //url: 'Json.json',
-          type: 'POST',
-          url: 'https://craigslist-bot.dev-story.my.id/scrape',
-          data: JSON.stringify({ location: $('#location option:selected').val(), query: $('#keyword').val() }),
-          dataType: "JSON",
-          contentType: "application/json",
-          success: function (data) {
-            // $("#alertscraping").hide();
-            // $("#process").attr("disabled", false);
-            // var dat = JSON.parse(JSON.stringify(data));
-            // if (dat.data.length != 0) {
-            //   $('#alertdone').fadeIn(1000);
-            //   setTimeout(function () {
-            //     $('#alertdone').fadeOut(1000);
-            //   }, 5000);
-
-            //   $("#results").empty();
-            //   for (let i = 0; i < dat.data.length; i++) {
-            //     var f = dat.data[i];
-            //     $("#results").append("<p id='" + i + "a' class ='text-center' style='font-size: 25px;display:none;' ><strong>Post </strong>" + (i + 1) + "</p>");
-            //     $("#results").append("<p id='" + i + "b' style='display:none;'><strong>Title: </strong>" + f[1].title + "</p>");
-            //     $("#results").append("<p id='" + i + "c' style='display:none;'><strong>ID: </strong>" + f[4].post_id + "</p>");
-            //     $("#results").append("<p id='" + i + "d' style='display:none;'><strong>Email: </strong>" + f[0].email + "</p>");
-            //     $("#results").append("<p id='" + i + "e' style='display:none;'><strong>Address: </strong>" + f[2].address + "</p>");
-            //     $("#results").append("<p style= 'width: 100%; display:none;' id='" + i + "f'><strong>Desc: </strong>" + f[3].desc + "</p>");
-            //   }
-
-            //   //=======================================Create the pagination part
-            //   var a = 0;
-            //   $("#PaginationPrincipal").empty();
-            //   for (let i = 0; i < dat.data.length / 5; i++) {
-            //     var f = dat.data[i];
-            //     a = a + 5;
-
-            //     $("#PaginationPrincipal").append("<li class='page-item'><a style='color:black;' class='page-link' href='javascript:PrincipalData(" + a + ")'>" + (i + 1) + "</a></li>");
-            //   }
-            //   //========================================End of pagination function
-            //   PrincipalData("5");
-            // } else {
-            //   console.log(data);
-            //   $('#alertresults').show();
-
-            // }
-
-          },
-          error: function () {
-            $("#alertscraping").hide();
-
-            $('#alerterror').fadeIn(1000);
-            setTimeout(function () {
-              $('#alerterror').fadeOut(1000);
-            }, 5000);
-
-          }
-        });
+        check();
       }
 
 
     });
-    //===============================End event when click the Search bottom
-
-    //===============================Event when dropdown change
-    // $("#location").change(function () {
-    //   if ($("#location").val() == "0" || $("#keyword").val() == "") {
-    //     $("#alertfilter").show();
-    //   } else {
-    //     $("#alertfilter").hide();
-    //     $('#alertscraping').show();
-    //     $('#alertresults').hide();
-    //     $("#process").attr("disabled", true);
 
 
-    //     $.ajax({
-    //       //url: 'Json.json',
-    //       type: 'POST',
-    //       url: 'https://craigslist-bot.dev-story.my.id/scrape',
-    //       data: JSON.stringify({ location: $('#location option:selected').val(), query: $('#keyword').val() }),
-    //       dataType: "JSON",
-    //       contentType: "application/json",
-    //       timeout: 360000,
-    //       success: function (data) {
-    //         $("#alertscraping").hide();
-    //         $("#process").attr("disabled", false);
-    //         var dat = JSON.parse(JSON.stringify(data));
-    //         if (dat.data.length != 0) {
-    //           $('#alertdone').fadeIn(1000);
-    //           setTimeout(function () {
-    //             $('#alertdone').fadeOut(1000);
-    //           }, 5000);
+    function check() {
 
-    //           $("#results").empty();
-    //           for (let i = 0; i < dat.data.length; i++) {
-    //             var f = dat.data[i];
-    //             $("#results").append("<p id='" + i + "a' class ='text-center' style='font-size: 25px;display:none;' ><strong>Post </strong>" + (i + 1) + "</p>");
-    //             $("#results").append("<p id='" + i + "b' style='display:none;'><strong>Title: </strong>" + f[1].title + "</p>");
-    //             $("#results").append("<p id='" + i + "c' style='display:none;'><strong>ID: </strong>" + f[4].post_id + "</p>");
-    //             $("#results").append("<p id='" + i + "d' style='display:none;'><strong>Email: </strong>" + f[0].email + "</p>");
-    //             $("#results").append("<p id='" + i + "e' style='display:none;'><strong>Address: </strong>" + f[2].address + "</p>");
-    //             $("#results").append("<p style= 'width: 100%; display:none;' id='" + i + "f'><strong>Desc: </strong>" + f[3].desc + "</p>");
-    //           }
+      if ($("#StatusScrape").val() == 0) {
 
-    //           //=======================================Create the pagination part
-    //           var a = 0;
-    //           $("#PaginationPrincipal").empty();
-    //           for (let i = 0; i < dat.data.length / 5; i++) {
-    //             var f = dat.data[i];
-    //             a = a + 5;
+        scrapeData();
+      } else {
+        if ($("#StatusContent").val() == 1) {
+          clearInterval(myVar);
 
-    //             $("#PaginationPrincipal").append("<li class='page-item'><a style='color:black;' class='page-link' href='javascript:PrincipalData(" + a + ")'>" + (i + 1) + "</a></li>");
-    //           }
-    //           //========================================End of pagination function
-    //           PrincipalData("5");
-    //         } else {
-    //           console.log(data);
-    //           $('#alertresults').show();
-
-    //         }
-
-    //       },
-    //       error: function () {
-    //         $("#alertscraping").hide();
-
-    //         $('#alerterror').fadeIn(1000);
-    //         setTimeout(function () {
-    //           $('#alerterror').fadeOut(1000);
-    //         }, 5000);
-
-    //       }
-    //     });
-    //   }
-
-    // });
-    // //===============================End event when dropdown change
-
-
+        } else {
+          getData();
+        }
+      }
+    }
   });
 
   // function to fire content api
@@ -308,6 +218,9 @@
 
 </script>
 <script>
+  //To fire the content API by intervals
+
+
   function getData() {
     $.ajax({
       type: 'POST',
@@ -316,45 +229,65 @@
       dataType: "JSON",
       contentType: "application/json",
       success: function (data) {
-        $("#alertscraping").hide();
-        $("#process").attr("disabled", false);
         var dat = JSON.parse(JSON.stringify(data));
-        if (dat.data.length != 0) {
+        if (dat.status == 1 && dat.data.length == 0) {
+          console.log("no data")
+          $('#alertresults').show();
+          $("#StatusContent").attr("value", "1");
+          $("#alertscraping").hide();
+          $('#loading').hide();
+          $("#process").attr("disabled", false);
+          $("#alertgetting").hide();
+        }
+        else if (dat.status == 1) {
+          $("#StatusContent").attr("value", "1");
+          $("#alertscraping").hide();
+          $('#loading').hide();
+          $("#process").attr("disabled", false);
+          $("#alertgetting").hide();
           $('#alertdone').fadeIn(1000);
           setTimeout(function () {
             $('#alertdone').fadeOut(1000);
           }, 5000);
 
-          $("#results").empty();
-          for (let i = 0; i < dat.data.length; i++) {
-            var f = dat.data[i];
-            $("#results").append("<p id='" + i + "a' class ='text-center' style='font-size: 25px;display:none;' ><strong>Post </strong>" + (i + 1) + "</p>");
-            $("#results").append("<p id='" + i + "b' style='display:none;'><strong>Title: </strong>" + f[1].title + "</p>");
-            $("#results").append("<p id='" + i + "c' style='display:none;'><strong>ID: </strong>" + f[4].post_id + "</p>");
-            $("#results").append("<p id='" + i + "d' style='display:none;'><strong>Email: </strong>" + f[0].email + "</p>");
-            $("#results").append("<p id='" + i + "e' style='display:none;'><strong>Address: </strong>" + f[2].address + "</p>");
-            $("#results").append("<p style= 'width: 100%; display:none;' id='" + i + "f'><strong>Desc: </strong>" + f[3].desc + "</p>");
-          }
-
-          //=======================================Create the pagination part
-          var a = 0;
-          $("#PaginationPrincipal").empty();
-          for (let i = 0; i < dat.data.length / 5; i++) {
-            var f = dat.data[i];
-            a = a + 5;
-
-            $("#PaginationPrincipal").append("<li class='page-item'><a style='color:black;' class='page-link' href='javascript:PrincipalData(" + a + ")'>" + (i + 1) + "</a></li>");
-          }
-          //========================================End of pagination function
-          PrincipalData("5");
         } else {
-          console.log(data);
-          $('#alertresults').show();
 
         }
 
+
+
+
+        $("#results").empty();
+        for (let i = 0; i < dat.data.length; i++) {
+          var f = dat.data[i];
+
+          $("#results").append("<p id='" + i + "a' class ='text-center' style='font-size: 25px;display:none;' ><strong>Post </strong>" + (i + 1) + "</p>");
+          $("#results").append("<p id='" + i + "b' style='display:none;'><strong>Title: </strong>" + f[1].title + "</p>");
+          $("#results").append("<p id='" + i + "c' style='display:none;'><strong>ID: </strong>" + f[4].post_id + "</p>");
+          $("#results").append("<p id='" + i + "d' style='display:none;'><strong>Email: </strong>" + f[0].email + "</p>");
+          $("#results").append("<p id='" + i + "e' style='display:none;'><strong>Address: </strong>" + f[2].address + "</p>");
+          $("#results").append("<p style= 'width: 100%; display:none;' id='" + i + "f'><strong>Desc: </strong>" + f[3].desc + "</p>");
+        }
+
+        //=======================================Create the pagination part
+        var a = 0;
+        $("#PaginationPrincipal").empty();
+        //dat.data.length 
+        for (let i = 0; i < dat.data.length / 5; i++) {
+          f = dat.data[i];
+          a = a + 5;
+
+          $("#PaginationPrincipal").append("<li class='page-item'><a style='color:black;' class='page-link' href='javascript:PrincipalData(" + a + ")'>" + (i + 1) + "</a></li>");
+        }
+        //========================================End of pagination function
+        PrincipalData("5");
+
+
+
+
       },
       error: function () {
+        console.log("Algo salio mal en el content api");
         $("#alertscraping").hide();
 
         $('#alerterror').fadeIn(1000);
@@ -365,7 +298,74 @@
       }
     });
   };
-  setInterval(getData(), 300); // Time in milliseconds
+
+  function scrapeData() {
+    $('#loading').show();
+    $('#alertscraping').show();
+    $.ajax({
+      //url: 'Json.json',
+      type: 'POST',
+      url: 'https://craigslist-bot.dev-story.my.id/scrape',
+      data: JSON.stringify({ location: $('#location option:selected').val(), query: $('#keyword').val() }),
+      dataType: "JSON",
+      contentType: "application/json",
+      success: function (data) {
+        $("#StatusScrape").attr("value", "1");
+        getData();
+
+
+        $("#alertscraping").hide();
+        $("#alertgetting").show();
+        // $("#process").attr("disabled", false);
+        // var dat = JSON.parse(JSON.stringify(data));
+        // if (dat.data.length != 0) {
+        //   $('#alertdone').fadeIn(1000);
+        //   setTimeout(function () {
+        //     $('#alertdone').fadeOut(1000);
+        //   }, 5000);
+
+        //   $("#results").empty();
+        //   for (let i = 0; i < dat.data.length; i++) {
+        //     var f = dat.data[i];
+        //     $("#results").append("<p id='" + i + "a' class ='text-center' style='font-size: 25px;display:none;' ><strong>Post </strong>" + (i + 1) + "</p>");
+        //     $("#results").append("<p id='" + i + "b' style='display:none;'><strong>Title: </strong>" + f[1].title + "</p>");
+        //     $("#results").append("<p id='" + i + "c' style='display:none;'><strong>ID: </strong>" + f[4].post_id + "</p>");
+        //     $("#results").append("<p id='" + i + "d' style='display:none;'><strong>Email: </strong>" + f[0].email + "</p>");
+        //     $("#results").append("<p id='" + i + "e' style='display:none;'><strong>Address: </strong>" + f[2].address + "</p>");
+        //     $("#results").append("<p style= 'width: 100%; display:none;' id='" + i + "f'><strong>Desc: </strong>" + f[3].desc + "</p>");
+        //   }
+
+        //   //=======================================Create the pagination part
+        //   var a = 0;
+        //   $("#PaginationPrincipal").empty();
+        //   for (let i = 0; i < dat.data.length / 5; i++) {
+        //     var f = dat.data[i];
+        //     a = a + 5;
+
+        //     $("#PaginationPrincipal").append("<li class='page-item'><a style='color:black;' class='page-link' href='javascript:PrincipalData(" + a + ")'>" + (i + 1) + "</a></li>");
+        //   }
+        //   //========================================End of pagination function
+        //   PrincipalData("5");
+        // } else {
+        //   console.log(data);
+        //   $('#alertresults').show();
+
+        // }
+
+      },
+      error: function () {
+        $("#alertscraping").hide();
+        $('#loading').hide();
+
+        $('#alerterror').fadeIn(1000);
+        setTimeout(function () {
+          $('#alerterror').fadeOut(1000);
+        }, 5000);
+
+      }
+    });
+  }
+
 
 </script>
 
