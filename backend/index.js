@@ -10,7 +10,7 @@ const fs = require('fs')
 let app = express()
 let url_list = []
 let data_list = []
-let status_scrape;
+let status_scrape = 1;
 
 app.use(cors())
 app.use(bodyParser.json())
