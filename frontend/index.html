@@ -25,11 +25,13 @@
 </head>
 <script>
   function PrincipalData(a) {
+    
     var BeginPage = a - 5;
     var EndPage = a;
 
     $("#results").children().hide();
     for (let i = BeginPage; i < EndPage; i++) {
+     
       $('#' + i + 'a').show();
       $('#' + i + 'b').show();
       $('#' + i + 'c').show();
@@ -45,8 +47,9 @@
 
 <body>
   <!--Nav bar-->
-  <nav class="navbar navbar-expand-lg navbar-light bg-secondary navbar-custom">
-    <a class="navbar-brand" href="#">Craigslist scraper bot</a>
+  <nav class="navbar navbar-expand-lg navbar-light bg-secondary navbar-custom" style="padding:0%;">
+    <img src="img/AllOffice.Space-logo-black.png " height="80vh;" width="130vh;">
+    <a class="navbar-brand" href="#" style="margin-left: 2%;">Craigslist scraper bot</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -109,7 +112,7 @@
             Please add both filters.
           </div>
           <div id="alertdone" class="alert alert-success collapse " role="alert">
-            Data is ready.
+            <p id="alertdonep"></p>
           </div>
           <div id="alerterror" class="alert alert-danger collapse " role="alert">
             Something was wrong.
@@ -135,8 +138,9 @@
     </div>
   </div>
 
-  <input id="StatusContent" type="hidden">
+  <input id="StatusContent" type="hidden" value="0">
   <input id="StatusScrape" type="hidden" value="0">
+
   </div>
   <!--End principal-->
 
@@ -150,8 +154,14 @@
 
 </body>
 <script>
-  $(document).ready(function () {
+  $(window).on('load', function () {
+    $("#alertdonep").text("TThis data is from  the last scrape you did.");
+    getData();
+    
+  });
 
+  $(document).ready(function () {
+    
     var myVar;
     //==================================to add the cities
     $.ajax({
@@ -178,10 +188,12 @@
     //==================================End to add the cities
     //=============================Event when click the Search bottom
     $("#process").click(function () {
-      myVar = setInterval(check, 5000);
+      $("#alertdonep").text("Data is ready.");
       if ($("#location").val() == "0" || $("#keyword").val().trim() == "") {
         $("#alertfilter").show();
+        
       } else {
+        myVar = setInterval(check, 5000);
         $('#loading').show();
         $("#alertfilter").hide();
         $('#alertscraping').show();
@@ -204,12 +216,14 @@
         scrapeData();
       } else {
         if ($("#StatusContent").val() == 1) {
-          clearInterval(myVar);
 
+          clearInterval(myVar);
         } else {
           getData();
         }
       }
+
+
     }
   });
 
@@ -238,53 +252,53 @@
           $('#loading').hide();
           $("#process").attr("disabled", false);
           $("#alertgetting").hide();
+         
         }
         else if (dat.status == 1) {
+          
+
           $("#StatusContent").attr("value", "1");
           $("#alertscraping").hide();
           $('#loading').hide();
           $("#process").attr("disabled", false);
           $("#alertgetting").hide();
           $('#alertdone').fadeIn(1000);
+
           setTimeout(function () {
             $('#alertdone').fadeOut(1000);
+           
           }, 5000);
-
+          
         } else {
-
+          
         }
+        //to validated if the DOM exist
+        var child = $("#results").children('p');
+          
+          for (let i = 0; i < dat.data.length; i++) {
+            var f = dat.data[i];
+            var r = true;
+            child.each(function () {
+              if ($(this).attr('id').substr(2) == f[4].post_id.substr(9)) {
+                r = false;
 
+              } else {
 
+              }              
+            });
 
+            if (r) {
+              
+              $("#results").append("<p id='" + i + "a' class ='text-center' style='font-size: 25px;' ><strong>Post </strong>" + (i + 1) + "</p>");
+              $("#results").append("<p id='" + i + "b' ><strong>Title: </strong>" + f[1].title + "</p>");
+              $("#results").append("<p id='" + i + "c" + f[4].post_id.substr(9) + "' ><strong>ID: </strong>" + f[4].post_id.substr(9) + "</p>");
+              $("#results").append("<p id='" + i + "d' ><strong>Email: </strong>" + f[0].email + "</p>");
+              $("#results").append("<p id='" + i + "e' ><strong>Address: </strong>" + f[2].address + "</p>");
+              $("#results").append("<p  id='" + i + "f'><strong>Desc: </strong>" + f[3].desc + "</p>");
+            }
 
-        $("#results").empty();
-        for (let i = 0; i < dat.data.length; i++) {
-          var f = dat.data[i];
-
-          $("#results").append("<p id='" + i + "a' class ='text-center' style='font-size: 25px;display:none;' ><strong>Post </strong>" + (i + 1) + "</p>");
-          $("#results").append("<p id='" + i + "b' style='display:none;'><strong>Title: </strong>" + f[1].title + "</p>");
-          $("#results").append("<p id='" + i + "c' style='display:none;'><strong>ID: </strong>" + f[4].post_id + "</p>");
-          $("#results").append("<p id='" + i + "d' style='display:none;'><strong>Email: </strong>" + f[0].email + "</p>");
-          $("#results").append("<p id='" + i + "e' style='display:none;'><strong>Address: </strong>" + f[2].address + "</p>");
-          $("#results").append("<p style= 'width: 100%; display:none;' id='" + i + "f'><strong>Desc: </strong>" + f[3].desc + "</p>");
-        }
-
-        //=======================================Create the pagination part
-        var a = 0;
-        $("#PaginationPrincipal").empty();
-        //dat.data.length 
-        for (let i = 0; i < dat.data.length / 5; i++) {
-          f = dat.data[i];
-          a = a + 5;
-
-          $("#PaginationPrincipal").append("<li class='page-item'><a style='color:black;' class='page-link' href='javascript:PrincipalData(" + a + ")'>" + (i + 1) + "</a></li>");
-        }
-        //========================================End of pagination function
-        PrincipalData("5");
-
-
-
-
+          }
+        pagination(dat.data.length, dat.status);
       },
       error: function () {
         console.log("Algo salio mal en el content api");
@@ -312,46 +326,10 @@
       success: function (data) {
         $("#StatusScrape").attr("value", "1");
         getData();
-
-
         $("#alertscraping").hide();
         $("#alertgetting").show();
-        // $("#process").attr("disabled", false);
-        // var dat = JSON.parse(JSON.stringify(data));
-        // if (dat.data.length != 0) {
-        //   $('#alertdone').fadeIn(1000);
-        //   setTimeout(function () {
-        //     $('#alertdone').fadeOut(1000);
-        //   }, 5000);
-
-        //   $("#results").empty();
-        //   for (let i = 0; i < dat.data.length; i++) {
-        //     var f = dat.data[i];
-        //     $("#results").append("<p id='" + i + "a' class ='text-center' style='font-size: 25px;display:none;' ><strong>Post </strong>" + (i + 1) + "</p>");
-        //     $("#results").append("<p id='" + i + "b' style='display:none;'><strong>Title: </strong>" + f[1].title + "</p>");
-        //     $("#results").append("<p id='" + i + "c' style='display:none;'><strong>ID: </strong>" + f[4].post_id + "</p>");
-        //     $("#results").append("<p id='" + i + "d' style='display:none;'><strong>Email: </strong>" + f[0].email + "</p>");
-        //     $("#results").append("<p id='" + i + "e' style='display:none;'><strong>Address: </strong>" + f[2].address + "</p>");
-        //     $("#results").append("<p style= 'width: 100%; display:none;' id='" + i + "f'><strong>Desc: </strong>" + f[3].desc + "</p>");
-        //   }
-
-        //   //=======================================Create the pagination part
-        //   var a = 0;
-        //   $("#PaginationPrincipal").empty();
-        //   for (let i = 0; i < dat.data.length / 5; i++) {
-        //     var f = dat.data[i];
-        //     a = a + 5;
-
-        //     $("#PaginationPrincipal").append("<li class='page-item'><a style='color:black;' class='page-link' href='javascript:PrincipalData(" + a + ")'>" + (i + 1) + "</a></li>");
-        //   }
-        //   //========================================End of pagination function
-        //   PrincipalData("5");
-        // } else {
-        //   console.log(data);
-        //   $('#alertresults').show();
-
-        // }
-
+        $("#results").empty();
+        $("#PaginationPrincipal").empty();
       },
       error: function () {
         $("#alertscraping").hide();
@@ -366,7 +344,26 @@
     });
   }
 
+  function pagination(b, status) {
+    //=======================================Create the pagination part
+    if (status == 1) {
+      var a = 0;
+      
 
+      for (let i = 0; i < b/5; i++) {
+
+        a = a + 5;
+
+        $("#PaginationPrincipal").append("<li class='page-item'><a style='color:black;' class='page-link' href='javascript:PrincipalData(" + a + ")'>" + (i + 1) + "</a></li>");
+        PrincipalData(5)
+      }
+    } else {
+
+    }
+
+    //========================================End of pagination function
+
+  }
 </script>
 
 </html>
