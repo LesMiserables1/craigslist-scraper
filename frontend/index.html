@@ -49,7 +49,7 @@
   <!--Nav bar-->
   <nav class="navbar navbar-expand-lg navbar-light bg-secondary navbar-custom" style="padding:0%;">
     <img src="img/AllOffice.Space-logo-black.png " height="80vh;" width="130vh;">
-    <a class="navbar-brand" href="#" style="margin-left: 2%;">Craigslist scraper bot</a>
+    <a class="navbar-brand" href="#" style="margin-left: 2%;">Craigslist Scraper Bot</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -155,7 +155,9 @@
 </body>
 <script>
   $(window).on('load', function () {
-    $("#alertdonep").text("TThis data is from  the last scrape you did.");
+    $("#alertdonep").text("This data is from the last scrape you did.");
+   // $("#process").attr("disabled", true);
+    
     getData();
     
   });
@@ -236,6 +238,9 @@
 
 
   function getData() {
+    //$("#process").css("background-color", '#DAD7D7');
+    $('#loading').show();
+    $('#alertgetting').show();
     $.ajax({
       type: 'POST',
       url: 'https://craigslist-bot.dev-story.my.id/content',
@@ -253,15 +258,15 @@
           $("#process").attr("disabled", false);
           $("#alertgetting").hide();
          
+         
         }
         else if (dat.status == 1) {
-          
-
           $("#StatusContent").attr("value", "1");
           $("#alertscraping").hide();
           $('#loading').hide();
           $("#process").attr("disabled", false);
           $("#alertgetting").hide();
+          
           $('#alertdone').fadeIn(1000);
 
           setTimeout(function () {
@@ -327,7 +332,7 @@
         $("#StatusScrape").attr("value", "1");
         getData();
         $("#alertscraping").hide();
-        $("#alertgetting").show();
+       // $("#alertgetting").show();
         $("#results").empty();
         $("#PaginationPrincipal").empty();
       },
