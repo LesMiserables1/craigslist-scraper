@@ -58,7 +58,11 @@ let filter = async (body) => {
     if (page_count == 'no results') {
       status = false
     } else {
-      scraping1(url)
+      try {
+        scraping1(url)
+      } catch (error) {
+        console.log(error)
+      }
       page_num += 120
     }
   }
