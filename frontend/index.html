@@ -10,15 +10,19 @@
   <link rel='stylesheet' type='text/css' media='screen' href='css/bootsrap/css/bootstrap.min.css'>
   <link rel='stylesheet' type='text/css' media='screen' href='css/loading.css'>
   <link rel="icon" type="image/png" href="img/AOS Square.jpg" />
-  <!--Bootstrap references-->
-  <script src="js/bootsrap/js/jquery-3.5.1.slim.min.js"></script>
-  <script src="js/bootsrap/js/bootstrap.bundle.min.js"></script>
-  <script src="js/bootsrap/js/bootstrap.bundle.js"></script>
-  <script src="js/bootsrap/js/bootstrap.js"></script>
-
 
   <!--JQuery references-->
   <script src="js/jquery-3.5.1.min.js"></script>
+  <script src="js/jquery.twbsPagination.js"></script>
+  <!--Bootstrap references-->
+  
+  <script src="js/bootsrap/js/bootstrap.bundle.min.js"></script>
+  <script src="js/bootsrap/js/bootstrap.bundle.js"></script>
+  <script src="js/bootsrap/js/bootstrap.js"></script>
+  
+
+
+  
 
   <link rel='stylesheet' type='text/css' media='screen' href='css/main.css'>
 
@@ -140,6 +144,7 @@
 
   <input id="StatusContent" type="hidden" value="0">
   <input id="StatusScrape" type="hidden" value="0">
+  <input id="length" type="hidden" value="0">
 
   </div>
   <!--End principal-->
@@ -156,8 +161,7 @@
 <script>
   $(window).on('load', function () {
     $("#alertdonep").text("This data is from the last scrape you did.");
-   // $("#process").attr("disabled", true);
-    
+    $("#process").attr("disabled", true);
     getData();
     
   });
@@ -195,7 +199,7 @@
         $("#alertfilter").show();
         
       } else {
-        myVar = setInterval(check, 5000);
+        myVar = setInterval(check, 10000);
         $('#loading').show();
         $("#alertfilter").hide();
         $('#alertscraping').show();
@@ -203,6 +207,7 @@
         $("#process").attr("disabled", true);
         $("#StatusContent").attr("value", "0");
         $("#StatusScrape").attr("value", "0");
+        $("#length").attr("value", "0");
 
         check();
       }
@@ -212,20 +217,16 @@
 
 
     function check() {
-
       if ($("#StatusScrape").val() == 0) {
-
         scrapeData();
       } else {
         if ($("#StatusContent").val() == 1) {
-
           clearInterval(myVar);
+         
         } else {
           getData();
         }
       }
-
-
     }
   });
 
@@ -235,19 +236,18 @@
 </script>
 <script>
   //To fire the content API by intervals
-
-
   function getData() {
-    //$("#process").css("background-color", '#DAD7D7');
     $('#loading').show();
     $('#alertgetting').show();
     $.ajax({
       type: 'POST',
       url: 'https://craigslist-bot.dev-story.my.id/content',
+     // url: 'Json.json',
       data: JSON.stringify({ location: $('#location option:selected').val(), query: $('#keyword').val() }),
       dataType: "JSON",
       contentType: "application/json",
       success: function (data) {
+        console.log(data);
         var dat = JSON.parse(JSON.stringify(data));
         if (dat.status == 1 && dat.data.length == 0) {
           console.log("no data")
@@ -256,11 +256,35 @@
           $("#alertscraping").hide();
           $('#loading').hide();
           $("#process").attr("disabled", false);
-          $("#alertgetting").hide();
-         
-         
+          $("#alertgetting").hide();        
         }
         else if (dat.status == 1) {
+          //to validated if the DOM exist
+         
+          for (let i = 0; i < dat.data.length; i++) {
+            var f = dat.data[i];
+            var r = true;
+            $("#results p.data").each(function () {
+              if ($(this).attr('id').substr(2) == f[4].post_id.substr(9)) {
+                //console.log("valido");
+                r = false;
+              } else {
+
+              }           
+            });
+
+            if (r) {              
+          //  console.log("imprimio");
+              $("#results").append("<p id='" + i + "a' class ='text-center' style='font-size: 25px;' ><strong>Post </strong>" + (i + 1) + "</p>");
+              $("#results").append("<p id='" + i + "b' ><strong>Title: </strong>" + f[1].title + "</p>");
+              $("#results").append("<p id='" + i + "c" + f[4].post_id.substr(9) + "' class='data' ><strong>ID: </strong>" + f[4].post_id.substr(9) + "</p>");
+              $("#results").append("<p id='" + i + "d'  ><strong>Email: </strong>" + f[0].email + "</p>");
+              $("#results").append("<p id='" + i + "e'  ><strong>Address: </strong>" + f[2].address + "</p>");
+              $("#results").append("<p id='" + i + "f' ><strong>Desc: </strong>" + f[3].desc + "</p>");
+            }
+          }
+         
+          $("#length").attr("value", dat.data.length);
           $("#StatusContent").attr("value", "1");
           $("#alertscraping").hide();
           $('#loading').hide();
@@ -270,45 +294,44 @@
           $('#alertdone').fadeIn(1000);
 
           setTimeout(function () {
-            $('#alertdone').fadeOut(1000);
-           
+            $('#alertdone').fadeOut(1000);     
           }, 5000);
           
         } else {
-          
-        }
-        //to validated if the DOM exist
-        var child = $("#results").children('p');
-          
+          //to validated if the DOM exist
+         
           for (let i = 0; i < dat.data.length; i++) {
             var f = dat.data[i];
             var r = true;
-            child.each(function () {
+            $("#results p.data").each(function () {
               if ($(this).attr('id').substr(2) == f[4].post_id.substr(9)) {
+                //console.log("valido");
                 r = false;
-
               } else {
 
-              }              
+              }           
             });
 
-            if (r) {
-              
+            if (r) {              
+          //  console.log("imprimio");
               $("#results").append("<p id='" + i + "a' class ='text-center' style='font-size: 25px;' ><strong>Post </strong>" + (i + 1) + "</p>");
               $("#results").append("<p id='" + i + "b' ><strong>Title: </strong>" + f[1].title + "</p>");
-              $("#results").append("<p id='" + i + "c" + f[4].post_id.substr(9) + "' ><strong>ID: </strong>" + f[4].post_id.substr(9) + "</p>");
-              $("#results").append("<p id='" + i + "d' ><strong>Email: </strong>" + f[0].email + "</p>");
-              $("#results").append("<p id='" + i + "e' ><strong>Address: </strong>" + f[2].address + "</p>");
-              $("#results").append("<p  id='" + i + "f'><strong>Desc: </strong>" + f[3].desc + "</p>");
+              $("#results").append("<p id='" + i + "c" + f[4].post_id.substr(9) + "' class='data' ><strong>ID: </strong>" + f[4].post_id.substr(9) + "</p>");
+              $("#results").append("<p id='" + i + "d'  ><strong>Email: </strong>" + f[0].email + "</p>");
+              $("#results").append("<p id='" + i + "e'  ><strong>Address: </strong>" + f[2].address + "</p>");
+              $("#results").append("<p id='" + i + "f' ><strong>Desc: </strong>" + f[3].desc + "</p>");
             }
-
           }
-        pagination(dat.data.length, dat.status);
+         
+         $("#length").attr("value", dat.data.length);
+        }               
+       
       },
       error: function () {
-        console.log("Algo salio mal en el content api");
-        $("#alertscraping").hide();
-
+       
+        $("#alertscraping").hide(); 
+        $('#loading').hide();
+        $("#alertgetting").hide();
         $('#alerterror').fadeIn(1000);
         setTimeout(function () {
           $('#alerterror').fadeOut(1000);
@@ -349,26 +372,37 @@
     });
   }
 
-  function pagination(b, status) {
-    //=======================================Create the pagination part
-    if (status == 1) {
-      var a = 0;
-      
-
-      for (let i = 0; i < b/5; i++) {
-
-        a = a + 5;
-
-        $("#PaginationPrincipal").append("<li class='page-item'><a style='color:black;' class='page-link' href='javascript:PrincipalData(" + a + ")'>" + (i + 1) + "</a></li>");
-        PrincipalData(5)
-      }
-    } else {
-
-    }
-
-    //========================================End of pagination function
-
-  }
 </script>
+<script type="text/javascript">
+ $(document).ajaxStop(function(){
+   if ($("#StatusContent").val()==1) {
+     console.log('Pagination');
+      let l = parseInt($("#length").val());
+      console.log(l);
+     if (Number.isInteger(l/5)) {
+           l = l/5;
+         } else {
+           l = Math.trunc(l/5) + 1;
+           //math.trunc
+         }
+         console.log(l);
+        $('#PaginationPrincipal').twbsPagination({
+          totalPages: l,
+          visiblePages: 10,
+          onPageClick: function (event, page) {
+             PrincipalData((page * 5));
+          }
+      }).on('page', function (event, page) {
+       
+        
+      });
+      PrincipalData(5);
+    
+   }else{
 
+   }
+    
+  }); 
+  
+</script>
 </html>

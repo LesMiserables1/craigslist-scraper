@@ -1,0 +1,21 @@
+<html>
+<script src="js/jquery-3.5.1.min.js"></script>
+<ul id="listas">
+    <li id="1" class="a">Elemento lista 1</li>
+    <li id="2" class="a"> Elemento lista 2</li>
+    <li id="3" class="a">Elemento lista 3</li>
+    <li id="4" class="a">Elemento lista 3</li>
+
+</ul>
+<input type="button" id="boton" value="Recorrer lista">
+<script>
+    $(document).ready(function () {
+        $("#boton").click(function () {
+            $("#listas li.a").each(function () {
+                alert($(this).attr('id'));
+            });
+        });
+    });
+</script>
+
+</html>
