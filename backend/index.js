@@ -48,11 +48,12 @@ app.post('/scrape', async(req, res) => {
 let filter = async (body) => {
   let status = true
   let page_num = 0;
+  let newQuery = body.query.replace(/ /g,"+")
   while (status) {
     let html_page,url
-    url = `${body.location}search/off?query=${body.query}&availabilityMode=0&s=${page_num}`
+    url = `${body.location}search/off?query=${newQuery}&availabilityMode=0&s=${page_num}`
     html_page = await rp(url)
-
+    
     const $ = cheerio.load(html_page)
     let page_count = $('span[class="button pagenum"]').first().text()
     if (page_count == 'no results') {
